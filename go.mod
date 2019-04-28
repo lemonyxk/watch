@@ -1,4 +1,4 @@
-module watch
+module go-watch
 
 go 1.12
 
