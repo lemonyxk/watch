@@ -1,4 +1,4 @@
-module go-watch
+module github.com/Lemo-yxk/go-watch
 
 go 1.12
 
