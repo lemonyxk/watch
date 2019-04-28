@@ -55,11 +55,18 @@ func (w *Watch) startProcess() {
 
 func (w *Watch) hasStartSuccess() (string, error) {
 
-	cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+w.getStartCommand())
-	out, err := cmd.CombinedOutput()
+	process, err := os.FindProcess(w.cmd.Process.Pid)
 	if err != nil {
-		return "", err
+		return "", nil
 	}
 
-	return string(out), nil
+	return fmt.Sprintf("%d is running", process.Pid), nil
+
+	//cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+w.getStartCommand())
+	//out, err := cmd.CombinedOutput()
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//return string(out), nil
 }

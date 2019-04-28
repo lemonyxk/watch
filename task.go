@@ -21,7 +21,7 @@ func (w *Watch) loop() {
 			case event := <-startChan:
 				log.Println("start process", event)
 				w.startProcess()
-				log.Println(w.hasStartSuccess())
+				//log.Println(w.hasStartSuccess())
 			case sig := <-stopChan:
 				log.Println("stop process", sig)
 				w.stopProcess()
