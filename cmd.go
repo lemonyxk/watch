@@ -25,15 +25,17 @@ func (w *Watch) stopProcess() {
 	log.Println(w.cmd.Process.Pid, "kill success")
 }
 
+func (w *Watch) getStartCommand() string {
+	return fmt.Sprintf("cd %s && %s", w.listenPath, strings.Join(w.config.start, " && "))
+}
+
 func (w *Watch) startProcess() {
 
 	if w.pid != 0 {
 		return
 	}
 
-	var cmdString = fmt.Sprintf("cd %s && %s", w.listenPath, strings.Join(w.config.start, " && "))
-
-	w.cmd = exec.Command("bash", "-c", cmdString)
+	w.cmd = exec.Command("bash", "-c", w.getStartCommand())
 
 	w.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	w.cmd.Stderr = os.Stderr
@@ -53,7 +55,7 @@ func (w *Watch) startProcess() {
 
 func (w *Watch) hasStartSuccess() (string, error) {
 
-	cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+fmt.Sprintf("%d", w.pid))
+	cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+w.getStartCommand())
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", err

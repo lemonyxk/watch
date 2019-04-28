@@ -85,8 +85,6 @@ func (w *Watch) Run() {
 
 	w.getConfig()
 
-	log.Println(w.config.ignore.files)
-
 	w.watchPathExceptIgnore()
 
 	w.listen()
