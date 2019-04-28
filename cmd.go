@@ -42,7 +42,8 @@ func (w *Watch) startProcess() {
 
 	err := w.cmd.Start()
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
+		os.Exit(0)
 	}
 
 	w.pid = w.cmd.Process.Pid

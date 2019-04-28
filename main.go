@@ -7,13 +7,16 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
 )
 
-const interval = time.Second
+const Interval = time.Second
+
+var ListenPath = "."
 
 type Watch struct {
 	watch      *fsnotify.Watcher
@@ -40,20 +43,30 @@ type Ignore struct {
 func init() {
 	log.SetFlags(log.Llongfile | log.Ltime | log.Ldate)
 
-	var listenPath string
-	flag.StringVar(&listenPath, "path", ".", "path")
+	flag.StringVar(&ListenPath, "path", ".", "path")
 	flag.Parse()
 
-	log.Println(listenPath)
+	info, err := os.Stat(ListenPath)
+	if err != nil {
+		log.Println(err)
+		os.Exit(0)
+	}
+
+	if !info.IsDir() {
+		log.Println(ListenPath, "is not a dir")
+		os.Exit(0)
+	}
+
+	l, _ := filepath.Abs(ListenPath)
+
+	ListenPath = l
 }
 
 func main() {
 
-	var pathName = "/Users/lemo/test/bairenniuniu/"
-
 	var watch = &Watch{}
 
-	watch.CreateListenPath(pathName)
+	watch.CreateListenPath(ListenPath)
 
 	watch.Run()
 
@@ -107,7 +120,7 @@ func (w *Watch) onInterval() {
 
 	w.isInterval = true
 
-	time.AfterFunc(interval, func() {
+	time.AfterFunc(Interval, func() {
 		w.isInterval = false
 	})
 }

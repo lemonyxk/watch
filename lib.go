@@ -20,15 +20,19 @@ func (w *Watch) CreateListenPath(pathName string) {
 func (w *Watch) createWatch() {
 	watch, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
+		os.Exit(0)
 	}
 	w.watch = watch
 }
 
 func (w *Watch) getConfig() {
-	file, err := os.OpenFile(path.Join(w.listenPath, "watch"), os.O_RDONLY, 0666)
+
+	var watchPathConfig = path.Join(w.listenPath, "watch")
+
+	file, err := os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
 	if err != nil {
-		log.Println(err)
+		log.Println(watchPathConfig, "is not found")
 		os.Exit(0)
 	}
 
