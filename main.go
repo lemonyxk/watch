@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const Interval = time.Second
+const Interval = 500 * time.Millisecond
 
 var ListenPath = "."
 
@@ -22,7 +22,8 @@ type Watch struct {
 	watch      *fsnotify.Watcher
 	listenPath string
 	config     Config
-	cache      map[string]string
+	cache      map[string]int
+	task       []string
 	mux        sync.RWMutex
 	isInterval bool
 	cmd        *exec.Cmd
@@ -74,24 +75,27 @@ func main() {
 
 func (w *Watch) Run() {
 
-	go func() {
-		w.onInterval()
+	time.AfterFunc(Interval, func() {
+		w.DelayTask()
+		w.OnInterval()
 		startChan <- fsnotify.Event{Name: "init"}
-	}()
+	})
 
-	w.cache = make(map[string]string)
+	w.cache = make(map[string]int)
 
 	w.createWatch()
 
-	w.getConfig()
+	w.GetConfig()
 
-	w.watchPathExceptIgnore()
+	w.WatchPathExceptIgnore()
 
-	w.listen()
+	w.Listen()
 
 	w.loop()
 
 	w.block()
+
+	defer w.watch.Close()
 }
 
 func (w *Watch) block() {
@@ -104,17 +108,15 @@ func (w *Watch) block() {
 
 	for {
 		log.Println("waiting close...")
-		w.stopProcess()
-		time.Sleep(time.Second)
+		w.StopProcess()
+		time.Sleep(100 * time.Millisecond)
 		break
 	}
-
-	w.watch.Close()
 
 	log.Println("close success", sign)
 }
 
-func (w *Watch) onInterval() {
+func (w *Watch) OnInterval() {
 
 	w.isInterval = true
 
@@ -123,7 +125,7 @@ func (w *Watch) onInterval() {
 	})
 }
 
-func (w *Watch) listen() {
+func (w *Watch) Listen() {
 	go func() {
 		for {
 			select {
@@ -133,7 +135,7 @@ func (w *Watch) listen() {
 					break
 				}
 
-				w.onInterval()
+				w.OnInterval()
 
 				// 排除 IGNORE 文件
 				var match = false
@@ -177,15 +179,15 @@ func (w *Watch) listen() {
 
 				// 修改权限
 				if ev.Op&fsnotify.Chmod == fsnotify.Chmod {
-					if w.isUpdate(ev.Name) {
-						w.task(ev)
+					if w.IsUpdate(ev.Name) {
+						w.Task(ev)
 					}
 				}
 
 				// 写入文件
 				if ev.Op&fsnotify.Write == fsnotify.Write {
-					if w.isUpdate(ev.Name) {
-						w.task(ev)
+					if w.IsUpdate(ev.Name) {
+						w.Task(ev)
 					}
 				}
 

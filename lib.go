@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"github.com/fsnotify/fsnotify"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 func (w *Watch) CreateListenPath(pathName string) {
@@ -26,7 +27,7 @@ func (w *Watch) createWatch() {
 	w.watch = watch
 }
 
-func (w *Watch) getConfig() {
+func (w *Watch) GetConfig() {
 
 	var watchPathConfig = path.Join(w.listenPath, "watch")
 
@@ -84,7 +85,7 @@ func (w *Watch) getConfig() {
 	}
 }
 
-func (w *Watch) matchPath(pathName string, source []string) bool {
+func (w *Watch) MatchPath(pathName string, source []string) bool {
 	for _, v := range source {
 		if strings.HasPrefix(pathName, v) {
 			return true
@@ -93,22 +94,30 @@ func (w *Watch) matchPath(pathName string, source []string) bool {
 	return false
 }
 
-func (w *Watch) setCache(pathName string, content string) {
+func (w *Watch) SetCache(pathName string, size int) {
 	w.mux.Lock()
 	defer w.mux.Unlock()
-	w.cache[pathName] = content
+	w.cache[pathName] = size
 }
 
-func (w *Watch) getCache(pathName string) string {
+func (w *Watch) GetCache(pathName string) int {
 	w.mux.RLock()
 	defer w.mux.RUnlock()
 	if content, ok := w.cache[pathName]; ok {
 		return content
 	}
-	return ""
+	return 0
 }
 
-func (w *Watch) getContent(pathName string) (string, error) {
+func (w *Watch) GetSize(pathName string) (int, error) {
+	info, err := os.Stat(pathName)
+	if err != nil {
+		return 0, err
+	}
+	return int(info.Size()), err
+}
+
+func (w *Watch) GetContent(pathName string) (string, error) {
 
 	bytes, err := ioutil.ReadFile(pathName)
 	if err != nil {
@@ -124,31 +133,31 @@ func (w *Watch) getContent(pathName string) (string, error) {
 	return content, nil
 }
 
-func (w *Watch) isUpdate(pathName string) bool {
+func (w *Watch) IsUpdate(pathName string) bool {
 
 	// Just wait file release lock from fsnotify
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 
-	content, err := w.getContent(pathName)
+	size, err := w.GetSize(pathName)
 	if err != nil {
 		return false
 	}
 
-	var cache = w.getCache(pathName)
+	var cache = w.GetCache(pathName)
 
-	w.setCache(pathName, content)
+	w.SetCache(pathName, size)
 
-	return cache != content
+	return cache != size
 }
 
-func (w *Watch) watchPathExceptIgnore() {
+func (w *Watch) WatchPathExceptIgnore() {
 	filepath.Walk(w.listenPath, func(pathName string, info os.FileInfo, err error) error {
 
 		if !info.IsDir() {
 			return err
 		}
 
-		if w.matchPath(pathName, w.config.ignore.paths) {
+		if w.MatchPath(pathName, w.config.ignore.paths) {
 			return err
 		}
 
@@ -157,8 +166,42 @@ func (w *Watch) watchPathExceptIgnore() {
 			return err
 		}
 
-		log.Println("watch", pathName)
+		w.AddTask(pathName)
+
+		log.Println("watch dir", pathName)
 
 		return err
 	})
+}
+
+func (w *Watch) AddTask(pathName string) {
+	if pathName == w.listenPath {
+		return
+	}
+	w.task = append(w.task, pathName)
+}
+
+func (w *Watch) DelayTask() {
+	for _, dir := range w.task {
+		filepath.Walk(dir, func(p string, i os.FileInfo, err error) error {
+
+			if i.IsDir() {
+				return err
+			}
+
+			// log.Println("watch file", p)
+
+			size, err := w.GetSize(p)
+
+			if err != nil {
+				return err
+			}
+
+			w.SetCache(p, size)
+
+			return err
+		})
+	}
+
+	log.Println(w.cache)
 }

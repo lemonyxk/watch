@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-func (w *Watch) stopProcess() {
+func (w *Watch) StopProcess() {
 
 	if w.pid == 0 {
 		return
@@ -25,7 +25,7 @@ func (w *Watch) stopProcess() {
 	log.Println(w.cmd.Process.Pid, "kill success")
 }
 
-func (w *Watch) getStartCommand() string {
+func (w *Watch) GetStartCommand() string {
 	return fmt.Sprintf("cd %s && %s", w.listenPath, strings.Join(w.config.start, " && "))
 }
 
@@ -35,7 +35,7 @@ func (w *Watch) startProcess() {
 		return
 	}
 
-	w.cmd = exec.Command("bash", "-c", w.getStartCommand())
+	w.cmd = exec.Command("bash", "-c", w.GetStartCommand())
 
 	w.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	w.cmd.Stderr = os.Stderr
@@ -53,7 +53,7 @@ func (w *Watch) startProcess() {
 	log.Println(w.cmd.Process.Pid, "run success")
 }
 
-func (w *Watch) hasStartSuccess() (string, error) {
+func (w *Watch) HasStartSuccess() (string, error) {
 
 	process, err := os.FindProcess(w.cmd.Process.Pid)
 	if err != nil {
@@ -62,7 +62,7 @@ func (w *Watch) hasStartSuccess() (string, error) {
 
 	return fmt.Sprintf("%d is running", process.Pid), nil
 
-	//cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+w.getStartCommand())
+	//cmd := exec.Command("bash", "-c", "ps axu | grep -v grep | grep "+w.GetStartCommand())
 	//out, err := cmd.CombinedOutput()
 	//if err != nil {
 	//	return "", err

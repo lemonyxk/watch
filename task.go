@@ -9,7 +9,7 @@ import (
 var startChan = make(chan fsnotify.Event)
 var stopChan = make(chan syscall.Signal)
 
-func (w *Watch) task(event fsnotify.Event) {
+func (w *Watch) Task(event fsnotify.Event) {
 	stopChan <- syscall.SIGINT
 	startChan <- event
 }
@@ -21,10 +21,10 @@ func (w *Watch) loop() {
 			case event := <-startChan:
 				log.Println("start process", event)
 				w.startProcess()
-				//log.Println(w.hasStartSuccess())
+				//log.Println(w.HasStartSuccess())
 			case sig := <-stopChan:
 				log.Println("stop process", sig)
-				w.stopProcess()
+				w.StopProcess()
 			}
 		}
 	}()
