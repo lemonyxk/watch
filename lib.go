@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -182,6 +183,9 @@ func (w *Watch) AddTask(pathName string) {
 }
 
 func (w *Watch) DelayTask() {
+
+	var s = 0
+
 	for _, dir := range w.task {
 		filepath.Walk(dir, func(p string, i os.FileInfo, err error) error {
 
@@ -199,9 +203,11 @@ func (w *Watch) DelayTask() {
 
 			w.SetCache(p, size)
 
+			s += size
+
 			return err
 		})
 	}
 
-	log.Println(w.cache)
+	log.Println(fmt.Sprintf("go-watch cache size is %d KB", s/1024))
 }

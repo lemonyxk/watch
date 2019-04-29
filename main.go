@@ -141,7 +141,7 @@ func (w *Watch) Listen() {
 				var match = false
 				for _, f := range w.config.ignore.files {
 					if strings.HasPrefix(ev.Name, f) {
-						log.Println("ignore files", ev.Name)
+						// log.Println("ignore files", ev.Name)
 						match = true
 					}
 				}
