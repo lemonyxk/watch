@@ -42,7 +42,7 @@ type Ignore struct {
 }
 
 func init() {
-	log.SetFlags(log.Llongfile | log.Ltime | log.Ldate)
+	log.SetFlags(log.Ltime | log.Ldate)
 
 	flag.StringVar(&ListenPath, "path", ".", "path")
 	flag.Parse()
