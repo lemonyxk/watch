@@ -34,8 +34,57 @@ func (w *Watch) GetConfig() {
 
 	file, err := os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
 	if err != nil {
-		log.Println(watchPathConfig, "is not found")
-		os.Exit(0)
+
+		var yes = "Y"
+
+		for {
+
+			fmt.Println(watchPathConfig, "is not found, create watch file now : [Y/N]")
+
+			if _, err := fmt.Scanf("%s", &yes); err != nil {
+				log.Println(err)
+				break
+			}
+
+			yes = strings.ToUpper(yes)
+
+			if yes != "N" && yes != "Y" {
+				os.Exit(0)
+			}
+
+			break
+
+		}
+
+		if yes == "N" {
+			os.Exit(0)
+		}
+
+		f,err := os.Create(watchPathConfig)
+		if err != nil {
+			log.Println(err)
+			os.Exit(0)
+		}
+
+		defer f.Close()
+
+		tf,err := os.Open("./template")
+		if err != nil {
+			log.Println(err)
+			os.Exit(0)
+		}
+
+		defer tf.Close()
+
+		_,err = io.Copy(f,tf)
+		if err != nil {
+			log.Println(err)
+			os.Exit(0)
+		}
+
+
+		file, _ = os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
+
 	}
 
 	defer file.Close()
@@ -52,7 +101,7 @@ func (w *Watch) GetConfig() {
 		}
 
 		var rule = strings.Trim(string(line), " ")
-
+		log.Println(rule)
 		if rule == "" {
 			continue
 		}
@@ -84,6 +133,7 @@ func (w *Watch) GetConfig() {
 		}
 
 	}
+
 }
 
 func (w *Watch) MatchPath(pathName string, source []string) bool {

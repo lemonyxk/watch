@@ -75,17 +75,18 @@ func main() {
 
 func (w *Watch) Run() {
 
-	time.AfterFunc(Interval, func() {
-		w.DelayTask()
-		w.OnInterval()
-		startChan <- fsnotify.Event{Name: "init"}
-	})
 
 	w.cache = make(map[string]int)
 
 	w.createWatch()
 
 	w.GetConfig()
+
+	time.AfterFunc(Interval, func() {
+		w.DelayTask()
+		w.OnInterval()
+		startChan <- fsnotify.Event{Name: "init"}
+	})
 
 	w.WatchPathExceptIgnore()
 
