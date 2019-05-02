@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"github.com/fsnotify/fsnotify"
@@ -14,7 +14,7 @@ func (w *Watch) Task(event fsnotify.Event) {
 	startChan <- event
 }
 
-func (w *Watch) loop() {
+func (w *Watch) Loop() {
 	go func() {
 		for {
 			select {

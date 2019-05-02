@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bufio"
@@ -19,7 +19,7 @@ func (w *Watch) CreateListenPath(pathName string) {
 	w.listenPath = pathName
 }
 
-func (w *Watch) createWatch() {
+func (w *Watch) CreateWatch() {
 	watch, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Println(err)
@@ -60,7 +60,7 @@ func (w *Watch) GetConfig() {
 			os.Exit(0)
 		}
 
-		f,err := os.Create(watchPathConfig)
+		f, err := os.Create(watchPathConfig)
 		if err != nil {
 			log.Println(err)
 			os.Exit(0)
@@ -68,7 +68,7 @@ func (w *Watch) GetConfig() {
 
 		defer f.Close()
 
-		tf,err := os.Open("./template")
+		tf, err := os.Open("./template")
 		if err != nil {
 			log.Println(err)
 			os.Exit(0)
@@ -76,12 +76,11 @@ func (w *Watch) GetConfig() {
 
 		defer tf.Close()
 
-		_,err = io.Copy(f,tf)
+		_, err = io.Copy(f, tf)
 		if err != nil {
 			log.Println(err)
 			os.Exit(0)
 		}
-
 
 		file, _ = os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
 
