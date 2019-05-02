@@ -18,6 +18,8 @@ func (w *Watch) StopProcess() {
 
 		log.Println(cmd.Process.Pid, "kill success")
 	}
+
+	w.commands = nil
 }
 
 func (w *Watch) startProcess() {
