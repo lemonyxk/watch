@@ -30,7 +30,7 @@ func (w *Watch) CreateWatch() {
 
 func (w *Watch) GetConfig() {
 
-	var watchPathConfig = path.Join(w.listenPath, "watch")
+	var watchPathConfig = path.Join(w.listenPath, ".watch")
 
 	file, err := os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
 	if err != nil {
@@ -39,10 +39,10 @@ func (w *Watch) GetConfig() {
 
 		for {
 
-			fmt.Println(watchPathConfig, "is not found, create watch file now : [Y/N]")
+			fmt.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
 
 			if _, err := fmt.Scanf("%s", &yes); err != nil {
-				log.Println(err)
+				// log.Println(err)
 				break
 			}
 
@@ -94,7 +94,7 @@ func (w *Watch) GetConfig() {
 		}
 
 		var rule = strings.Trim(string(line), " ")
-		log.Println(rule)
+
 		if rule == "" {
 			continue
 		}
@@ -111,27 +111,56 @@ func (w *Watch) GetConfig() {
 		switch key {
 		// get path
 		case "ignore":
+
 			var asbPath = path.Join(w.listenPath, rule)
+
+			if strings.HasSuffix(asbPath, "*") {
+				w.config.ignore.others = append(w.config.ignore.others, asbPath)
+				continue
+			}
+
 			info, err := os.Stat(asbPath)
 			if err != nil {
 				continue
 			}
+
 			if info.IsDir() {
 				w.config.ignore.paths = append(w.config.ignore.paths, asbPath)
 			} else {
 				w.config.ignore.files = append(w.config.ignore.files, asbPath)
 			}
+
 		case "start":
 			w.config.start = append(w.config.start, rule)
 		}
 
 	}
 
+	log.Println(w.config.ignore)
+
 }
 
-func (w *Watch) MatchPath(pathName string, source []string) bool {
-	for _, v := range source {
+func (w *Watch) MatchOthers(pathName string) bool {
+	for _, v := range w.config.ignore.others {
+		if strings.HasPrefix(pathName, v[:len(v)-1]) {
+			return true
+		}
+	}
+	return false
+}
+
+func (w *Watch) MatchPath(pathName string) bool {
+	for _, v := range w.config.ignore.paths {
 		if strings.HasPrefix(pathName, v) {
+			return true
+		}
+	}
+	return false
+}
+
+func (w *Watch) MatchFile(pathName string) bool {
+	for _, v := range w.config.ignore.files {
+		if pathName == v {
 			return true
 		}
 	}
@@ -201,7 +230,7 @@ func (w *Watch) WatchPathExceptIgnore() {
 			return err
 		}
 
-		if w.MatchPath(pathName, w.config.ignore.paths) {
+		if w.MatchPath(pathName) {
 			return err
 		}
 

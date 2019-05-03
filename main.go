@@ -11,7 +11,7 @@ import (
 var ListenPath = "."
 
 func init() {
-	log.SetFlags(log.Ltime | log.Ldate)
+	log.SetFlags(log.Ltime | log.Ldate | log.Llongfile)
 
 	flag.StringVar(&ListenPath, "path", ".", "path")
 	flag.Parse()

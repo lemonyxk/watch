@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -32,8 +31,9 @@ type Config struct {
 }
 
 type Ignore struct {
-	paths []string
-	files []string
+	paths  []string
+	files  []string
+	others []string
 }
 
 func (w *Watch) Run() {
@@ -105,14 +105,11 @@ func (w *Watch) Listen() {
 				w.OnInterval()
 
 				// 排除 IGNORE 文件
-				var match = false
-				for _, f := range w.config.ignore.files {
-					if strings.HasPrefix(ev.Name, f) {
-						// log.Println("ignore files", ev.Name)
-						match = true
-					}
+				if w.MatchFile(ev.Name) {
+					break
 				}
-				if match {
+
+				if w.MatchOthers(ev.Name) {
 					break
 				}
 
