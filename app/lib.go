@@ -226,6 +226,10 @@ func (w *Watch) IsUpdate(pathName string) bool {
 func (w *Watch) WatchPathExceptIgnore() {
 	filepath.Walk(w.listenPath, func(pathName string, info os.FileInfo, err error) error {
 
+		if w.MatchOthers(pathName) {
+			return err
+		}
+
 		if !info.IsDir() {
 			return err
 		}
