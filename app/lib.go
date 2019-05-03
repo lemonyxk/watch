@@ -136,7 +136,7 @@ func (w *Watch) GetConfig() {
 
 	}
 
-	log.Println(w.config.ignore)
+	// log.Println(w.config.ignore)
 
 }
 
