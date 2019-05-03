@@ -68,13 +68,7 @@ func (w *Watch) GetConfig() {
 
 		defer f.Close()
 
-		tf, err := os.Open("./template")
-		if err != nil {
-			log.Println(err)
-			os.Exit(0)
-		}
-
-		defer tf.Close()
+		tf := strings.NewReader(strings.Join(Template, "\r\n"))
 
 		_, err = io.Copy(f, tf)
 		if err != nil {
