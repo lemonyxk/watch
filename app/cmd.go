@@ -16,6 +16,8 @@ func (w *Watch) StopProcess() {
 			log.Println(err)
 		}
 
+		cmd.Process.Wait()
+
 		log.Println(cmd.Process.Pid, "kill success")
 	}
 
