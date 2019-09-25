@@ -4,5 +4,6 @@ go 1.12
 
 require (
 	github.com/fsnotify/fsnotify v1.4.7
+	github.com/gookit/color v1.2.0
 	golang.org/x/sys v0.0.0-20190924154521-2837fb4f24fe // indirect
 )

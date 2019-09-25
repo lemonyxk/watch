@@ -1,11 +1,12 @@
 package app
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
+
+	"github.com/gookit/color"
 )
 
 func (w *Watch) StopProcess() {
@@ -13,12 +14,12 @@ func (w *Watch) StopProcess() {
 	for _, cmd := range w.commands {
 		err := syscall.Kill(-cmd.Process.Pid, syscall.SIGINT)
 		if err != nil {
-			log.Println(err)
+			color.Red.Println(err)
 		}
 
 		_, _ = cmd.Process.Wait()
 
-		log.Println(cmd.Process.Pid, "kill success")
+		color.Bold.Println(cmd.Process.Pid, "kill success")
 	}
 
 	w.commands = nil
@@ -39,13 +40,12 @@ func (w *Watch) startProcess() {
 
 		err := cmd.Start()
 		if err != nil {
-			log.Println(err)
-			os.Exit(0)
+			panic(err)
 		}
 
 		w.commands = append(w.commands, cmd)
 
-		log.Println(cmd.Process.Pid, "run success")
+		color.Bold.Println(cmd.Process.Pid, "run success")
 	}
 
 }

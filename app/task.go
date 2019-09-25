@@ -1,9 +1,10 @@
 package app
 
 import (
-	"github.com/fsnotify/fsnotify"
-	"log"
 	"syscall"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/gookit/color"
 )
 
 var startChan = make(chan fsnotify.Event)
@@ -19,10 +20,10 @@ func (w *Watch) Loop() {
 		for {
 			select {
 			case event := <-startChan:
-				log.Println("start process", event)
+				color.Bold.Println("start process", event)
 				w.startProcess()
 			case sig := <-stopChan:
-				log.Println("stop process", sig)
+				color.Bold.Println("stop process", sig)
 				w.StopProcess()
 			}
 		}

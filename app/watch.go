@@ -2,7 +2,8 @@ package app
 
 import (
 	"github.com/fsnotify/fsnotify"
-	"log"
+	"github.com/gookit/color"
+
 	"os"
 	"os/exec"
 	"os/signal"
@@ -74,13 +75,13 @@ func (w *Watch) Block() {
 	sign := <-signalChan
 
 	for {
-		log.Println("waiting close...")
+		color.Bold.Println("waiting close...")
 		w.StopProcess()
 		time.Sleep(100 * time.Millisecond)
 		break
 	}
 
-	log.Println("close success", sign)
+	color.Bold.Println("close success", sign)
 }
 
 func (w *Watch) OnInterval() {
@@ -114,29 +115,29 @@ func (w *Watch) Listen() {
 				}
 
 				if ev.Op&fsnotify.Create == fsnotify.Create {
-					log.Println("create", ev.Name)
+					color.Bold.Println("create", ev.Name)
 					// 这里获取新创建文件的信息，如果是目录，则加入监控中
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Add(ev.Name)
-						log.Println("add watch", ev.Name)
+						color.Bold.Println("add watch", ev.Name)
 					}
 				}
 
 				if ev.Op&fsnotify.Remove == fsnotify.Remove {
-					log.Println("delete", ev.Name)
+					color.Bold.Println("delete", ev.Name)
 					// 如果删除文件是目录，则移除监控
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Remove(ev.Name)
-						log.Println("delete watch", ev.Name)
+						color.Bold.Println("delete watch", ev.Name)
 					}
 				}
 
 				// 重命名文件 删除监听
 				if ev.Op&fsnotify.Rename == fsnotify.Rename {
-					log.Println("rename", ev.Name)
-					log.Println("delete watch", ev.Name)
+					color.Bold.Println("rename", ev.Name)
+					color.Bold.Println("delete watch", ev.Name)
 					// 获取不到旧文件的资料 直接移除
 					_ = w.watch.Remove(ev.Name)
 				}
@@ -156,7 +157,7 @@ func (w *Watch) Listen() {
 				}
 
 			case err := <-w.watch.Errors:
-				log.Println("error", err)
+				color.Red.Println("error", err)
 			}
 		}
 	}()

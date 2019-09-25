@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/gookit/color"
 
 	"github.com/Lemo-yxk/go-watch/app"
 )
@@ -14,22 +14,19 @@ var ListenPath = "."
 
 func init() {
 
-	fmt.Println("Welcome use go watch")
-	fmt.Println("version:1.0")
-
-	log.SetFlags(log.Ltime | log.Ldate)
+	color.Bold.Println("Welcome use go watch")
+	color.Bold.Println("version:1.0")
 
 	flag.StringVar(&ListenPath, "path", ".", "path")
 	flag.Parse()
 
 	info, err := os.Stat(ListenPath)
 	if err != nil {
-		log.Println(err)
-		os.Exit(0)
+		panic(err)
 	}
 
 	if !info.IsDir() {
-		log.Println(ListenPath, "is not a dir")
+		color.Red.Println(ListenPath, "is not dir")
 		os.Exit(0)
 	}
 

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/gookit/color"
 )
 
 func (w *Watch) CreateListenPath(pathName string) {
@@ -23,8 +23,7 @@ func (w *Watch) CreateListenPath(pathName string) {
 func (w *Watch) CreateWatch() {
 	watch, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Println(err)
-		os.Exit(0)
+		panic(err)
 	}
 	w.watch = watch
 }
@@ -40,10 +39,9 @@ func (w *Watch) GetConfig() {
 
 		for {
 
-			fmt.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
+			color.Bold.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
 
 			if _, err := fmt.Scanf("%s", &yes); err != nil {
-				// log.Println(err)
 				break
 			}
 
@@ -63,8 +61,7 @@ func (w *Watch) GetConfig() {
 
 		f, err := os.Create(watchPathConfig)
 		if err != nil {
-			log.Println(err)
-			os.Exit(0)
+			panic(err)
 		}
 
 		defer func() { _ = f.Close() }()
@@ -73,8 +70,7 @@ func (w *Watch) GetConfig() {
 
 		_, err = io.Copy(f, tf)
 		if err != nil {
-			log.Println(err)
-			os.Exit(0)
+			panic(err)
 		}
 
 		file, _ = os.OpenFile(watchPathConfig, os.O_RDONLY, 0666)
@@ -136,8 +132,6 @@ func (w *Watch) GetConfig() {
 		}
 
 	}
-
-	// log.Println(w.config.ignore)
 
 }
 
@@ -266,7 +260,7 @@ func (w *Watch) WatchPathExceptIgnore() {
 
 		w.AddTask(pathName)
 
-		log.Println("watch dir", pathName)
+		color.Bold.Println("watch dir", pathName)
 
 		return err
 	})
@@ -290,8 +284,6 @@ func (w *Watch) DelayTask() {
 				return err
 			}
 
-			// log.Println("watch file", p)
-
 			size, err := w.GetSize(p)
 
 			if err != nil {
@@ -304,5 +296,5 @@ func (w *Watch) DelayTask() {
 		})
 	}
 
-	log.Println(fmt.Sprintf("go-watch cache size is %d KB", s/1024))
+	color.Bold.Println(fmt.Sprintf("go-watch cache size is %d KB", s/1024))
 }
