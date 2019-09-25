@@ -17,7 +17,7 @@ type Watch struct {
 	watch      *fsnotify.Watcher
 	listenPath string
 	config     Config
-	cache      map[string]int
+	cache      map[string]string
 	task       []string
 	mux        sync.RWMutex
 	isInterval bool
@@ -38,7 +38,7 @@ type Ignore struct {
 
 func (w *Watch) Run() {
 
-	w.cache = make(map[string]int)
+	w.cache = make(map[string]string)
 
 	w.CreateWatch()
 
@@ -54,7 +54,7 @@ func (w *Watch) Run() {
 
 	w.Block()
 
-	defer w.watch.Close()
+	defer func() { _ = w.watch.Close() }()
 }
 
 func (w *Watch) RunTask() {
@@ -118,7 +118,7 @@ func (w *Watch) Listen() {
 					// 这里获取新创建文件的信息，如果是目录，则加入监控中
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
-						w.watch.Add(ev.Name)
+						_ = w.watch.Add(ev.Name)
 						log.Println("add watch", ev.Name)
 					}
 				}
@@ -128,7 +128,7 @@ func (w *Watch) Listen() {
 					// 如果删除文件是目录，则移除监控
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
-						w.watch.Remove(ev.Name)
+						_ = w.watch.Remove(ev.Name)
 						log.Println("delete watch", ev.Name)
 					}
 				}
@@ -138,7 +138,7 @@ func (w *Watch) Listen() {
 					log.Println("rename", ev.Name)
 					log.Println("delete watch", ev.Name)
 					// 获取不到旧文件的资料 直接移除
-					w.watch.Remove(ev.Name)
+					_ = w.watch.Remove(ev.Name)
 				}
 
 				// 修改权限

@@ -2,10 +2,11 @@ package main
 
 import (
 	"flag"
-	"github.com/Lemo-yxk/go-watch/app"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/Lemo-yxk/go-watch/app"
 )
 
 var ListenPath = "."

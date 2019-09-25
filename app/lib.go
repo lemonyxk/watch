@@ -2,6 +2,7 @@ package app
 
 import (
 	"bufio"
+	"crypto/md5"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -66,7 +67,7 @@ func (w *Watch) GetConfig() {
 			os.Exit(0)
 		}
 
-		defer f.Close()
+		defer func() { _ = f.Close() }()
 
 		tf := strings.NewReader(strings.Join(Template, "\r\n"))
 
@@ -80,7 +81,7 @@ func (w *Watch) GetConfig() {
 
 	}
 
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	var reader = bufio.NewReader(file)
 
@@ -167,19 +168,37 @@ func (w *Watch) MatchFile(pathName string) bool {
 	return false
 }
 
-func (w *Watch) SetCache(pathName string, size int) {
-	w.mux.Lock()
-	defer w.mux.Unlock()
-	w.cache[pathName] = size
+func (w *Watch) Md5(pathName string) string {
+
+	f, err := os.Open(pathName)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() { _ = f.Close() }()
+
+	md5hash := md5.New()
+	if _, err := io.Copy(md5hash, f); err != nil {
+		panic(err)
+	}
+
+	return fmt.Sprintf("%x", md5hash.Sum(nil))
 }
 
-func (w *Watch) GetCache(pathName string) int {
+func (w *Watch) SetMd5(pathName string, value string) {
+	w.mux.Lock()
+	defer w.mux.Unlock()
+
+	w.cache[pathName] = w.Md5(pathName)
+}
+
+func (w *Watch) GetMd5(pathName string) string {
 	w.mux.RLock()
 	defer w.mux.RUnlock()
 	if content, ok := w.cache[pathName]; ok {
 		return content
 	}
-	return 0
+	return ""
 }
 
 func (w *Watch) GetSize(pathName string) (int, error) {
@@ -211,20 +230,22 @@ func (w *Watch) IsUpdate(pathName string) bool {
 	// Just wait file release lock from fsnotify
 	time.Sleep(200 * time.Millisecond)
 
-	size, err := w.GetSize(pathName)
-	if err != nil {
-		return false
-	}
+	// size, err := w.GetSize(pathName)
+	// if err != nil {
+	// 	return false
+	// }
 
-	var cache = w.GetCache(pathName)
+	var cache = w.GetMd5(pathName)
 
-	w.SetCache(pathName, size)
+	var value = w.Md5(pathName)
 
-	return cache != size
+	w.SetMd5(pathName, value)
+
+	return cache != value
 }
 
 func (w *Watch) WatchPathExceptIgnore() {
-	filepath.Walk(w.listenPath, func(pathName string, info os.FileInfo, err error) error {
+	_ = filepath.Walk(w.listenPath, func(pathName string, info os.FileInfo, err error) error {
 
 		if w.MatchOthers(pathName) {
 			return err
@@ -263,7 +284,7 @@ func (w *Watch) DelayTask() {
 	var s = 0
 
 	for _, dir := range w.task {
-		filepath.Walk(dir, func(p string, i os.FileInfo, err error) error {
+		_ = filepath.Walk(dir, func(p string, i os.FileInfo, err error) error {
 
 			if i.IsDir() {
 				return err
@@ -276,8 +297,6 @@ func (w *Watch) DelayTask() {
 			if err != nil {
 				return err
 			}
-
-			w.SetCache(p, size)
 
 			s += size
 
