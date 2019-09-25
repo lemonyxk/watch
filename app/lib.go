@@ -292,6 +292,10 @@ func (w *Watch) DelayTask() {
 
 			s += size
 
+			var value = w.Md5(p)
+
+			w.SetMd5(p, value)
+
 			return err
 		})
 	}
