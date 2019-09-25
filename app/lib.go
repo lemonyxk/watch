@@ -222,7 +222,7 @@ func (w *Watch) GetContent(pathName string) (string, error) {
 func (w *Watch) IsUpdate(pathName string) bool {
 
 	// Just wait file release lock from fsnotify
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 
 	// size, err := w.GetSize(pathName)
 	// if err != nil {
