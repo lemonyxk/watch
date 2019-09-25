@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,6 +13,10 @@ import (
 var ListenPath = "."
 
 func init() {
+
+	fmt.Println("Welcome use go watch")
+	fmt.Println("version:1.0")
+
 	log.SetFlags(log.Ltime | log.Ldate)
 
 	flag.StringVar(&ListenPath, "path", ".", "path")
