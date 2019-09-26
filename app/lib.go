@@ -179,14 +179,14 @@ func (w *Watch) Md5(pathName string) string {
 	return fmt.Sprintf("%x", md5hash.Sum(nil))
 }
 
-func (w *Watch) SetMd5(pathName string, value string) {
+func (w *Watch) SetMd5ToCache(pathName string, value string) {
 	w.mux.Lock()
 	defer w.mux.Unlock()
 
 	w.cache[pathName] = w.Md5(pathName)
 }
 
-func (w *Watch) GetMd5(pathName string) string {
+func (w *Watch) GetMd5FromCache(pathName string) string {
 	w.mux.RLock()
 	defer w.mux.RUnlock()
 	if content, ok := w.cache[pathName]; ok {
@@ -201,6 +201,33 @@ func (w *Watch) GetSize(pathName string) (int, error) {
 		return 0, err
 	}
 	return int(info.Size()), err
+}
+
+func (w *Watch) SetModTimeToCache(pathName string, value string) {
+	w.mux.Lock()
+	defer w.mux.Unlock()
+
+	w.cache[pathName] = w.GetModTime(pathName)
+}
+
+func (w *Watch) GetModTimeFromCache(pathName string) string {
+	w.mux.RLock()
+	defer w.mux.RUnlock()
+	if content, ok := w.cache[pathName]; ok {
+		return content
+	}
+	return ""
+}
+
+func (w *Watch) GetModTime(pathName string) string {
+	info, err := os.Stat(pathName)
+	if err != nil {
+		panic(err)
+	}
+
+	var modTime = info.ModTime()
+
+	return modTime.String()
 }
 
 func (w *Watch) GetContent(pathName string) (string, error) {
@@ -229,11 +256,11 @@ func (w *Watch) IsUpdate(pathName string) bool {
 	// 	return false
 	// }
 
-	var cache = w.GetMd5(pathName)
+	var cache = w.GetModTimeFromCache(pathName)
 
-	var value = w.Md5(pathName)
+	var value = w.GetModTime(pathName)
 
-	w.SetMd5(pathName, value)
+	w.SetModTimeToCache(pathName, value)
 
 	return cache != value
 }
@@ -292,9 +319,9 @@ func (w *Watch) DelayTask() {
 
 			s += size
 
-			var value = w.Md5(p)
+			var value = w.GetModTime(p)
 
-			w.SetMd5(p, value)
+			w.SetModTimeToCache(p, value)
 
 			return err
 		})
