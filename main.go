@@ -15,7 +15,7 @@ var ListenPath = "."
 func init() {
 
 	color.Bold.Println("Welcome use go watch")
-	color.Bold.Println("version:1.1")
+	color.Bold.Println("version:1.2")
 
 	flag.StringVar(&ListenPath, "path", ".", "path")
 	flag.Parse()
