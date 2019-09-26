@@ -162,7 +162,7 @@ func (w *Watch) MatchFile(pathName string) bool {
 	return false
 }
 
-func (w *Watch) Md5(pathName string) string {
+func (w *Watch) GetMd5(pathName string) string {
 
 	f, err := os.Open(pathName)
 	if err != nil {
@@ -183,7 +183,7 @@ func (w *Watch) SetMd5ToCache(pathName string, value string) {
 	w.mux.Lock()
 	defer w.mux.Unlock()
 
-	w.cache[pathName] = w.Md5(pathName)
+	w.cache[pathName] = w.GetMd5(pathName)
 }
 
 func (w *Watch) GetMd5FromCache(pathName string) string {
@@ -256,11 +256,11 @@ func (w *Watch) IsUpdate(pathName string) bool {
 	// 	return false
 	// }
 
-	var cache = w.GetModTimeFromCache(pathName)
+	var cache = w.GetMd5FromCache(pathName)
 
-	var value = w.GetModTime(pathName)
+	var value = w.GetMd5(pathName)
 
-	w.SetModTimeToCache(pathName, value)
+	w.SetMd5ToCache(pathName, value)
 
 	return cache != value
 }
@@ -319,9 +319,9 @@ func (w *Watch) DelayTask() {
 
 			s += size
 
-			var value = w.GetModTime(p)
+			var value = w.GetMd5(p)
 
-			w.SetModTimeToCache(p, value)
+			w.SetMd5ToCache(p, value)
 
 			return err
 		})
