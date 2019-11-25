@@ -6,7 +6,9 @@ var Template = []string{
 	".git",
 	"vendor",
 	"node_modules",
+	"main",
 
 	"[start]",
-	"go run main.go",
+	"go build -o main main.go",
+	"./main",
 }

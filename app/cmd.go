@@ -7,12 +7,14 @@ import (
 	"syscall"
 
 	"github.com/gookit/color"
+
+	"github.com/Lemo-yxk/go-watch/vars"
 )
 
 func (w *Watch) StopProcess() {
 
 	for _, cmd := range w.commands {
-		err := syscall.Kill(-cmd.Process.Pid, syscall.SIGINT)
+		err := syscall.Kill(-cmd.Process.Pid, syscall.Signal(vars.Sig))
 		if err != nil {
 			color.Red.Println(err)
 		}

@@ -8,38 +8,38 @@ import (
 	"github.com/gookit/color"
 
 	"github.com/Lemo-yxk/go-watch/app"
+	"github.com/Lemo-yxk/go-watch/vars"
 )
-
-var ListenPath = "."
 
 func init() {
 
 	color.Bold.Println("Welcome use go watch")
 	color.Bold.Println("version:1.3")
 
-	flag.StringVar(&ListenPath, "path", ".", "path")
+	flag.StringVar(&vars.ListenPath, "path", ".", "path")
+	flag.IntVar(&vars.Sig, "sig", 0x2, "sig")
 	flag.Parse()
 
-	info, err := os.Stat(ListenPath)
+	info, err := os.Stat(vars.ListenPath)
 	if err != nil {
 		panic(err)
 	}
 
 	if !info.IsDir() {
-		color.Red.Println(ListenPath, "is not dir")
+		color.Red.Println(vars.ListenPath, "is not dir")
 		os.Exit(0)
 	}
 
-	l, _ := filepath.Abs(ListenPath)
+	l, _ := filepath.Abs(vars.ListenPath)
 
-	ListenPath = l
+	vars.ListenPath = l
 }
 
 func main() {
 
 	var watch = &app.Watch{}
 
-	watch.CreateListenPath(ListenPath)
+	watch.CreateListenPath(vars.ListenPath)
 
 	watch.Run()
 
