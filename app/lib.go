@@ -304,10 +304,12 @@ func (w *Watch) DelayTask() {
 
 	var s = 0
 
-	for _, dir := range w.task {
-		_ = filepath.Walk(dir, func(p string, i os.FileInfo, err error) error {
+	var i = 0
 
-			if i.IsDir() {
+	for _, dir := range w.task {
+		_ = filepath.Walk(dir, func(p string, info os.FileInfo, err error) error {
+
+			if info.IsDir() {
 				return err
 			}
 
@@ -318,6 +320,7 @@ func (w *Watch) DelayTask() {
 			}
 
 			s += size
+			i += 1
 
 			var value = w.GetMd5(p)
 
@@ -329,5 +332,5 @@ func (w *Watch) DelayTask() {
 		})
 	}
 
-	color.Bold.Println(fmt.Sprintf("go-watch cache size is %d KB", s/1024))
+	color.Bold.Println(fmt.Sprintf("file size: %d KB, file count: %d", s/1024, i))
 }
