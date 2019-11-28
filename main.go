@@ -14,7 +14,7 @@ import (
 func init() {
 
 	color.Bold.Println("Welcome use go watch")
-	color.Bold.Println("version:1.3")
+	color.Bold.Println("version:1.4")
 
 	flag.StringVar(&vars.ListenPath, "path", ".", "path")
 	flag.IntVar(&vars.Sig, "sig", 0x2, "sig")
