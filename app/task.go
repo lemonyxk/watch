@@ -2,6 +2,7 @@ package app
 
 import (
 	"syscall"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gookit/color"
@@ -23,7 +24,9 @@ func (w *Watch) Loop() {
 			select {
 			case event := <-startChan:
 				color.Bold.Println("start process", event)
+				var start = time.Now()
 				w.startProcess()
+				color.Bold.Println("time", float64(time.Now().Sub(start).Milliseconds())/1000)
 			case sig := <-stopChan:
 				color.Bold.Println("stop process", sig)
 				w.StopProcess()
