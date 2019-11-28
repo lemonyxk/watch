@@ -3,6 +3,8 @@ package app
 import (
 	"os"
 	"os/exec"
+	"runtime"
+	"strconv"
 	"strings"
 	"syscall"
 
@@ -14,17 +16,38 @@ import (
 func (w *Watch) StopProcess() {
 
 	for _, cmd := range w.commands {
-		err := syscall.Kill(-cmd.Process.Pid, syscall.Signal(vars.Sig))
+
+		var err error
+		switch runtime.GOOS {
+		case "windows":
+			err = killWindows(cmd)
+		default:
+			err = killUnix(cmd)
+		}
 		if err != nil {
 			color.Red.Println(err)
 		}
 
-		_, _ = cmd.Process.Wait()
+		_, err = cmd.Process.Wait()
+		if err != nil {
+			color.Red.Println(err)
+		}
 
 		color.Bold.Println(cmd.Process.Pid, "kill success")
 	}
 
 	w.commands = nil
+}
+
+func killUnix(cmd *exec.Cmd) error {
+	return syscall.Kill(-cmd.Process.Pid, syscall.Signal(vars.Sig))
+}
+
+func killWindows(cmd *exec.Cmd) error {
+	kill := exec.Command("TASKKILL", "/T", "/F", "/PID", strconv.Itoa(cmd.Process.Pid))
+	kill.Stderr = os.Stderr
+	kill.Stdout = os.Stdout
+	return kill.Run()
 }
 
 func (w *Watch) startProcess() {

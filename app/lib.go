@@ -321,6 +321,8 @@ func (w *Watch) DelayTask() {
 
 			var value = w.GetMd5(p)
 
+			_, _ = os.Stdout.WriteString(p + "\r")
+
 			w.SetMd5ToCache(p, value)
 
 			return err
