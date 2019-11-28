@@ -55,6 +55,7 @@ func (w *Watch) startProcess() {
 	for _, v := range w.config.start {
 
 		var args = strings.Split(v, " ")
+		color.Bold.Println(strings.Join(args, " "))
 		var cmd = exec.Command(args[0], args[1:]...)
 		cmd.Dir = w.listenPath
 
