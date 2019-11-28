@@ -5,7 +5,6 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
-	"strings"
 	"syscall"
 
 	"github.com/gookit/color"
@@ -54,14 +53,16 @@ func (w *Watch) startProcess() {
 
 	for _, v := range w.config.start {
 
-		var args = strings.Split(v, " ")
-		var cmd = exec.Command(args[0], args[1:]...)
-		cmd.Dir = w.listenPath
+		var cmd *exec.Cmd
 
 		if runtime.GOOS != "windows" {
+			cmd = exec.Command("bash", "-c", v)
 			cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+		} else {
+			cmd = exec.Command("cmd", "/C", v)
 		}
 
+		cmd.Dir = w.listenPath
 		cmd.Stderr = os.Stderr
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
