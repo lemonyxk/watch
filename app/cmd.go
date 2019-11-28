@@ -5,7 +5,6 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
-	"strings"
 	"syscall"
 
 	"github.com/gookit/color"
@@ -54,9 +53,9 @@ func (w *Watch) startProcess() {
 
 	for _, v := range w.config.start {
 
-		var args = strings.Split(v, " ")
-		color.Bold.Println(strings.Join(args, " "))
-		var cmd = exec.Command(args[0], args[1:]...)
+		// var args = strings.Split(v, " ")
+		// color.Bold.Println(strings.Join(args, " "))
+		var cmd = exec.Command(v)
 		cmd.Dir = w.listenPath
 
 		if runtime.GOOS != "windows" {
