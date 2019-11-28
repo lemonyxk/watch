@@ -9,7 +9,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -324,8 +323,6 @@ func (w *Watch) DelayTask() {
 			i += 1
 
 			var value = w.GetMd5(p)
-
-			_, _ = os.Stdout.WriteString("[ " + strconv.Itoa(i) + " ]" + p + "\r")
 
 			w.SetMd5ToCache(p, value)
 
