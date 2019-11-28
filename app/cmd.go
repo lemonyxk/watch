@@ -58,7 +58,10 @@ func (w *Watch) startProcess() {
 		var cmd = exec.Command(args[0], args[1:]...)
 		cmd.Dir = w.listenPath
 
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+		if runtime.GOOS != "windows" {
+			cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+		}
+
 		cmd.Stderr = os.Stderr
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout

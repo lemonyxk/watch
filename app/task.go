@@ -5,13 +5,15 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gookit/color"
+
+	"github.com/Lemo-yxk/go-watch/vars"
 )
 
 var startChan = make(chan fsnotify.Event)
 var stopChan = make(chan syscall.Signal)
 
 func (w *Watch) Task(event fsnotify.Event) {
-	stopChan <- syscall.SIGINT
+	stopChan <- syscall.Signal(vars.Sig)
 	startChan <- event
 }
 
