@@ -70,7 +70,7 @@ func (w *Watch) Block() {
 	// 创建信号
 	signalChan := make(chan os.Signal, 1)
 	// 通知
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR2)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	// 阻塞
 	sign := <-signalChan
 
