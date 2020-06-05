@@ -12,7 +12,10 @@ import (
 	"time"
 )
 
-const Interval = 500 * time.Millisecond
+type CmdInfo struct {
+	cmd    *exec.Cmd
+	status bool
+}
 
 type Watch struct {
 	watch      *fsnotify.Watcher
@@ -21,14 +24,13 @@ type Watch struct {
 	cache      map[string]string
 	task       []string
 	mux        sync.RWMutex
-	isInterval bool
-	commands   []*exec.Cmd
+	commands   []*CmdInfo
 	isRun      bool
 }
 
 type Config struct {
-	ignore Ignore
-	start  []string
+	ignore  Ignore
+	command []string
 }
 
 type Ignore struct {
@@ -45,13 +47,13 @@ func (w *Watch) Run() {
 
 	w.GetConfig()
 
-	w.RunTask()
-
 	w.WatchPathExceptIgnore()
 
 	w.Listen()
 
 	w.Loop()
+
+	w.RunTask()
 
 	w.Block()
 
@@ -59,11 +61,8 @@ func (w *Watch) Run() {
 }
 
 func (w *Watch) RunTask() {
-	time.AfterFunc(Interval, func() {
-		w.DelayTask()
-		w.OnInterval()
-		startChan <- fsnotify.Event{Name: "init"}
-	})
+	w.DelayTask()
+	startChan <- fsnotify.Event{Name: "init"}
 }
 
 func (w *Watch) Block() {
@@ -84,32 +83,19 @@ func (w *Watch) Block() {
 	color.Bold.Println("close success", sign)
 }
 
-func (w *Watch) OnInterval() {
-
-	w.isInterval = true
-
-	time.AfterFunc(Interval, func() {
-		w.isInterval = false
-	})
-}
-
 func (w *Watch) Listen() {
 	go func() {
 		for {
 			select {
 			case ev := <-w.watch.Events:
 
-				if w.isInterval {
-					break
-				}
-
-				w.OnInterval()
-
 				// 排除 IGNORE 文件
+				// 用于新添加的文件
 				if w.MatchFile(ev.Name) {
 					break
 				}
 
+				// 排除 正则
 				if w.MatchOthers(ev.Name) {
 					break
 				}

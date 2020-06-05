@@ -66,7 +66,7 @@ func (w *Watch) GetConfig() {
 
 		defer func() { _ = f.Close() }()
 
-		tf := strings.NewReader(strings.Join(Template, "\r\n"))
+		tf := strings.NewReader(strings.Trim(Template, "\r\n"))
 
 		_, err = io.Copy(f, tf)
 		if err != nil {
@@ -82,6 +82,7 @@ func (w *Watch) GetConfig() {
 	var reader = bufio.NewReader(file)
 
 	var key = ""
+	var command = ""
 
 	for {
 		line, _, err := reader.ReadLine()
@@ -91,6 +92,7 @@ func (w *Watch) GetConfig() {
 		}
 
 		var rule = strings.Trim(string(line), " ")
+		rule = strings.Replace(rule, "$DIR", w.listenPath, -1)
 
 		if rule == "" {
 			continue
@@ -127,10 +129,18 @@ func (w *Watch) GetConfig() {
 				w.config.ignore.files = append(w.config.ignore.files, asbPath)
 			}
 
-		case "start":
-			w.config.start = append(w.config.start, rule)
-		}
+		case "command":
+			command += rule
 
+			if strings.HasSuffix(command, "\\") {
+				command = command[0 : len(command)-1]
+				continue
+			}
+
+			w.config.command = append(w.config.command, command)
+
+			command = ""
+		}
 	}
 
 }
