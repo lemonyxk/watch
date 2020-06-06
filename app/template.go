@@ -8,6 +8,7 @@ var Template = `
 vendor
 node_modules
 main
+
 [command]
 #
 # you command
@@ -24,5 +25,16 @@ main
 #          ./src: ls
 #          ./test*: echo test
 #
+
 go run main.go
+
+[host]
+# http://127.0.0.1:12365
+# http://127.0.0.1:12365/reload?name=.
+# http://127.0.0.1:12365/reload
+# http://127.0.0.1:12365/reload?name=$DIR
+# http://127.0.0.1:12365/reload?name=./src
+# http://127.0.0.1:12365/reload?name=./src*
+
+http://127.0.0.1:12365/reload
 `
