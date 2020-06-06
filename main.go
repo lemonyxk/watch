@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gookit/color"
+	"github.com/Lemo-yxk/lemo/console"
 
 	"github.com/Lemo-yxk/go-watch/app"
 	"github.com/Lemo-yxk/go-watch/vars"
@@ -13,8 +13,8 @@ import (
 
 func init() {
 
-	color.Bold.Println("Welcome use go watch")
-	color.Bold.Println("version:1.4")
+	console.Bold.Println("Welcome use go watch")
+	console.Bold.Println("version:1.4")
 
 	flag.StringVar(&vars.ListenPath, "path", ".", "path")
 	flag.IntVar(&vars.Sig, "sig", 0x2, "sig")
@@ -26,7 +26,7 @@ func init() {
 	}
 
 	if !info.IsDir() {
-		color.Red.Println(vars.ListenPath, "is not dir")
+		console.FgRed.Println(vars.ListenPath, "is not dir")
 		os.Exit(0)
 	}
 

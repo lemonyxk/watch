@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Lemo-yxk/lemo/console"
 	"github.com/fsnotify/fsnotify"
-	"github.com/gookit/color"
 )
 
 func (w *Watch) CreateListenPath(pathName string) {
@@ -39,7 +39,7 @@ func (w *Watch) GetConfig() {
 
 		for {
 
-			color.Bold.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
+			console.Bold.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
 
 			if _, err := fmt.Scanf("%s", &yes); err != nil {
 				break
@@ -140,6 +140,8 @@ func (w *Watch) GetConfig() {
 			w.config.command = append(w.config.command, command)
 
 			command = ""
+		case "host":
+			go w.StartServer(rule)
 		}
 	}
 
@@ -297,7 +299,7 @@ func (w *Watch) WatchPathExceptIgnore() {
 
 		w.AddTask(pathName)
 
-		color.Bold.Println("watch dir", pathName)
+		console.Bold.Println("watch dir", pathName)
 
 		return err
 	})
@@ -340,5 +342,5 @@ func (w *Watch) DelayTask() {
 		})
 	}
 
-	color.Bold.Println(fmt.Sprintf("file size: %d KB, file count: %d", s/1024, i))
+	console.Bold.Println(fmt.Sprintf("file size: %d KB, file count: %d", s/1024, i))
 }
