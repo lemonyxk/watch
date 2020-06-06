@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/Lemo-yxk/lemo/console"
 	"github.com/fsnotify/fsnotify"
@@ -73,12 +72,9 @@ func (w *Watch) Block() {
 	// 阻塞
 	sign := <-signalChan
 
-	for {
-		console.Bold.Println("waiting close...")
-		w.StopProcess()
-		time.Sleep(100 * time.Millisecond)
-		break
-	}
+	console.Bold.Println("waiting close...")
+
+	w.StopProcess()
 
 	console.Bold.Println("close success", sign)
 }

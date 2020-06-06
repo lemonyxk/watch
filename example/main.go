@@ -16,6 +16,6 @@ import (
 )
 
 func main() {
-	var strs = []string{"a"}
+	var strs = []string{"12365815"}
 	log.Println(strings.Join(strs, ": "))
 }
