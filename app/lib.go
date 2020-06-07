@@ -173,28 +173,33 @@ func (w *Watch) MatchFile(pathName string) bool {
 	return false
 }
 
-func (w *Watch) GetMd5(pathName string) string {
+func (w *Watch) GetMd5(pathName string) (string, error) {
 
 	f, err := os.Open(pathName)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	defer func() { _ = f.Close() }()
 
 	md5hash := md5.New()
 	if _, err := io.Copy(md5hash, f); err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return fmt.Sprintf("%x", md5hash.Sum(nil))
+	return fmt.Sprintf("%x", md5hash.Sum(nil)), nil
 }
 
 func (w *Watch) SetMd5ToCache(pathName string, value string) {
 	w.mux.Lock()
 	defer w.mux.Unlock()
 
-	w.cache[pathName] = w.GetMd5(pathName)
+	var v, err = w.GetMd5(pathName)
+	if err != nil {
+		return
+	}
+
+	w.cache[pathName] = v
 }
 
 func (w *Watch) GetMd5FromCache(pathName string) string {
@@ -269,7 +274,10 @@ func (w *Watch) IsUpdate(pathName string) bool {
 
 	var cache = w.GetMd5FromCache(pathName)
 
-	var value = w.GetMd5(pathName)
+	var value, err = w.GetMd5(pathName)
+	if err != nil {
+		return false
+	}
 
 	w.SetMd5ToCache(pathName, value)
 
@@ -333,7 +341,10 @@ func (w *Watch) DelayTask() {
 			s += size
 			i += 1
 
-			var value = w.GetMd5(p)
+			value, err := w.GetMd5(p)
+			if err != nil {
+				return err
+			}
 
 			w.SetMd5ToCache(p, value)
 
