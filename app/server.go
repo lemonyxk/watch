@@ -19,7 +19,6 @@ import (
 	"github.com/Lemo-yxk/lemo/exception"
 	"github.com/Lemo-yxk/lemo/http"
 	"github.com/Lemo-yxk/lemo/http/server"
-	"github.com/Lemo-yxk/lemo/utils"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -28,23 +27,13 @@ func (w *Watch) StartServer(host string) {
 	console.Bold.Println(host)
 
 	u, err := url.Parse(host)
-	if err != nil {
-		console.FgRed.Println(err)
+	exception.Assert(err)
+
+	if u.Path == "" {
+		u.Path = "/"
 	}
 
-	var ip = strings.Split(u.Host, ":")[0]
-	var port = u.Port()
-	var path = u.Path
-
-	if port == "" {
-		port = "80"
-	}
-
-	if path == "" {
-		path = "/"
-	}
-
-	var httpServer = server.Server{Host: ip, Port: utils.Conv.Atoi(port)}
+	var httpServer = server.Server{Host: u.Host}
 
 	// httpServer.OnError = func(stream *http.Stream, err exception.Error) {
 	// 	console.Error(err)
@@ -52,7 +41,7 @@ func (w *Watch) StartServer(host string) {
 
 	var router = server.Router{IgnoreCase: true}
 
-	router.Route("GET", path).Handler(func(stream *http.Stream) exception.Error {
+	router.Route("GET", u.Path).Handler(func(stream *http.Stream) exception.Error {
 
 		stream.AutoParse()
 
