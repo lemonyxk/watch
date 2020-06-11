@@ -91,6 +91,11 @@ func (w *Watch) Listen() {
 					break
 				}
 
+				// 排除目录
+				if w.MatchPath(ev.Name) {
+					break
+				}
+
 				// 排除 正则
 				if w.MatchOthers(ev.Name) {
 					break
