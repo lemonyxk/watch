@@ -55,7 +55,7 @@ func (w *Watch) startProcess(event fsnotify.Event) {
 				p = path.Join(w.listenPath, p)
 			}
 			c = strings.Join(cmdArray[1:len(cmdArray)], ": ")
-			if len(pb) > 0 {
+			if len(pb) > 1 {
 				if pb[1] == "wait" {
 					wait = true
 				}
