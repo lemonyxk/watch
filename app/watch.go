@@ -96,7 +96,7 @@ func (w *Watch) Listen() {
 					break
 				}
 
-				// 排除 正则
+				// 排除正则
 				if w.MatchOthers(ev.Name) {
 					break
 				}

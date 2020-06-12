@@ -43,16 +43,23 @@ func (w *Watch) startProcess(event fsnotify.Event) {
 		var cmdArray = strings.Split(w.config.command[i], ": ")
 		var p = ""
 		var c = ""
+		var wait = false
 		if len(cmdArray) == 0 {
 			c = ""
 		} else if len(cmdArray) == 1 {
 			c = cmdArray[0]
 		} else {
-			p = cmdArray[0]
-			if !path.IsAbs(cmdArray[0]) {
-				p = path.Join(w.listenPath, cmdArray[0])
+			var pb = strings.Split(cmdArray[0], " ")
+			p = pb[0]
+			if !path.IsAbs(p) {
+				p = path.Join(w.listenPath, p)
 			}
 			c = strings.Join(cmdArray[1:len(cmdArray)], ": ")
+			if len(pb) > 0 {
+				if pb[1] == "wait" {
+					wait = true
+				}
+			}
 		}
 
 		if p == "" {
@@ -88,13 +95,21 @@ func (w *Watch) startProcess(event fsnotify.Event) {
 		var cmdInfo = &CmdInfo{cmd: cmd, status: true}
 		w.commands = append(w.commands, cmdInfo)
 
-		go func() {
+		if wait {
 			_, err = cmdInfo.cmd.Process.Wait()
 			if err != nil {
 				console.FgRed.Println(err)
 			}
 			cmdInfo.status = false
-		}()
+		} else {
+			go func() {
+				_, err = cmdInfo.cmd.Process.Wait()
+				if err != nil {
+					console.FgRed.Println(err)
+				}
+				cmdInfo.status = false
+			}()
+		}
 
 		console.Bold.Println(cmd.Process.Pid, "run success")
 	}
