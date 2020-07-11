@@ -1,8 +1,8 @@
-module github.com/Lemo-yxk/go-watch
+module github.com/lemoyxk/watch
 
-go 1.14
+go 1.15
 
 require (
-	github.com/Lemo-yxk/lemo v0.0.0-20200611075152-c864166e7855
 	github.com/fsnotify/fsnotify v1.4.9
+	github.com/lemoyxk/kitty v0.0.0-20200711144314-0f820d034ea7
 )

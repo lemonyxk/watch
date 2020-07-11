@@ -1,13 +1,13 @@
 package app
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"os/signal"
 	"sync"
 	"syscall"
 
-	"github.com/Lemo-yxk/lemo/console"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -72,11 +72,11 @@ func (w *Watch) Block() {
 	// 阻塞
 	sign := <-signalChan
 
-	console.Bold.Println("waiting close...")
+	fmt.Println("waiting close...")
 
 	w.StopProcess()
 
-	console.Bold.Println("close success", sign)
+	fmt.Println("close success", sign)
 }
 
 func (w *Watch) Listen() {
@@ -102,29 +102,29 @@ func (w *Watch) Listen() {
 				}
 
 				if ev.Op&fsnotify.Create == fsnotify.Create {
-					console.Bold.Println("create", ev.Name)
+					fmt.Println("create", ev.Name)
 					// 这里获取新创建文件的信息，如果是目录，则加入监控中
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Add(ev.Name)
-						console.Bold.Println("add watch", ev.Name)
+						fmt.Println("add watch", ev.Name)
 					}
 				}
 
 				if ev.Op&fsnotify.Remove == fsnotify.Remove {
-					console.Bold.Println("delete", ev.Name)
+					fmt.Println("delete", ev.Name)
 					// 如果删除文件是目录，则移除监控
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Remove(ev.Name)
-						console.Bold.Println("delete watch", ev.Name)
+						fmt.Println("delete watch", ev.Name)
 					}
 				}
 
 				// 重命名文件 删除监听
 				if ev.Op&fsnotify.Rename == fsnotify.Rename {
-					console.Bold.Println("rename", ev.Name)
-					console.Bold.Println("delete watch", ev.Name)
+					fmt.Println("rename", ev.Name)
+					fmt.Println("delete watch", ev.Name)
 					// 获取不到旧文件的资料 直接移除
 					_ = w.watch.Remove(ev.Name)
 				}
@@ -144,7 +144,7 @@ func (w *Watch) Listen() {
 				}
 
 			case err := <-w.watch.Errors:
-				console.FgRed.Println("error", err)
+				fmt.Println("error", err)
 			}
 		}
 	}()

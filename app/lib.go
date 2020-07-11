@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Lemo-yxk/lemo/console"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -38,7 +37,7 @@ func (w *Watch) GetConfig() {
 
 		for {
 
-			console.Bold.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
+			fmt.Println(watchPathConfig, "is not found, create .watch file now : [Y/N]")
 
 			if _, err := fmt.Scanf("%s", &yes); err != nil {
 				break
@@ -306,7 +305,7 @@ func (w *Watch) WatchPathExceptIgnore() {
 
 		w.AddTask(pathName)
 
-		console.Bold.Println("watch dir", pathName)
+		fmt.Println("watch dir", pathName)
 
 		return err
 	})
@@ -352,5 +351,5 @@ func (w *Watch) DelayTask() {
 		})
 	}
 
-	console.Bold.Println(fmt.Sprintf("file size: %d KB, file count: %d", s/1024, i))
+	fmt.Println(fmt.Sprintf("file size: %d KB, file count: %d", s/1024, i))
 }

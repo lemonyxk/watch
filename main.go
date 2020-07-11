@@ -2,19 +2,18 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/Lemo-yxk/lemo/console"
-
-	"github.com/Lemo-yxk/go-watch/app"
-	"github.com/Lemo-yxk/go-watch/vars"
+	"github.com/lemoyxk/watch/app"
+	"github.com/lemoyxk/watch/vars"
 )
 
 func init() {
 
-	console.Bold.Println("Welcome use go watch")
-	console.Bold.Println("version:1.4")
+	fmt.Println("Welcome use go watch")
+	fmt.Println("version:1.4")
 
 	flag.StringVar(&vars.ListenPath, "path", ".", "path")
 	flag.IntVar(&vars.Sig, "sig", 0x2, "sig")
@@ -26,7 +25,7 @@ func init() {
 	}
 
 	if !info.IsDir() {
-		console.FgRed.Println(vars.ListenPath, "is not dir")
+		fmt.Println(vars.ListenPath, "is not dir")
 		os.Exit(0)
 	}
 

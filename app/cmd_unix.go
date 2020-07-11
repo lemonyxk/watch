@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"syscall"
 
-	"github.com/Lemo-yxk/go-watch/vars"
+	"github.com/lemoyxk/watch/vars"
 )
 
 func killGroup(cmd *exec.Cmd) error {

@@ -1,21 +1,21 @@
 package app
 
 import (
+	"fmt"
 	"os"
 	"path"
 	"strings"
 	"syscall"
 	"time"
 
-	"github.com/Lemo-yxk/lemo/console"
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/Lemo-yxk/go-watch/vars"
+	"github.com/lemoyxk/watch/vars"
 )
 
 func (w *Watch) StopProcess() {
 
-	console.Bold.Println("stop process", syscall.Signal(vars.Sig))
+	fmt.Println("stop process", syscall.Signal(vars.Sig))
 
 	for i := 0; i < len(w.commands); i++ {
 		if !w.commands[i].status {
@@ -24,10 +24,10 @@ func (w *Watch) StopProcess() {
 
 		var err = killGroup(w.commands[i].cmd)
 		if err != nil {
-			console.FgRed.Println(err)
+			fmt.Println(err)
 		}
 
-		console.Bold.Println(w.commands[i].cmd.Process.Pid, "kill success")
+		fmt.Println(w.commands[i].cmd.Process.Pid, "kill success")
 	}
 
 	w.commands = nil
@@ -37,7 +37,7 @@ func (w *Watch) startProcess(event fsnotify.Event) {
 
 	var start = time.Now()
 
-	console.Bold.Println("start process", event)
+	fmt.Println("start process", event)
 
 	for i := 0; i < len(w.config.command); i++ {
 		var cmdArray = strings.Split(w.config.command[i], ": ")
@@ -98,22 +98,22 @@ func (w *Watch) startProcess(event fsnotify.Event) {
 		if wait {
 			_, err = cmdInfo.cmd.Process.Wait()
 			if err != nil {
-				console.FgRed.Println(err)
+				fmt.Println(err)
 			}
 			cmdInfo.status = false
 		} else {
 			go func() {
 				_, err = cmdInfo.cmd.Process.Wait()
 				if err != nil {
-					console.FgRed.Println(err)
+					fmt.Println(err)
 				}
 				cmdInfo.status = false
 			}()
 		}
 
-		console.Bold.Println(cmd.Process.Pid, "run success")
+		fmt.Println(cmd.Process.Pid, "run success")
 	}
 
-	console.Bold.Println("time", float64(time.Now().Sub(start).Milliseconds())/1000)
+	fmt.Println("time", float64(time.Now().Sub(start).Milliseconds())/1000)
 
 }

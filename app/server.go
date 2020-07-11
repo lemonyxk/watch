@@ -11,23 +11,24 @@
 package app
 
 import (
+	"fmt"
 	"net/url"
 	path2 "path"
 	"strings"
 
-	"github.com/Lemo-yxk/lemo/console"
-	"github.com/Lemo-yxk/lemo/exception"
-	"github.com/Lemo-yxk/lemo/http"
-	"github.com/Lemo-yxk/lemo/http/server"
 	"github.com/fsnotify/fsnotify"
+	"github.com/lemoyxk/kitty/http"
+	"github.com/lemoyxk/kitty/http/server"
 )
 
 func (w *Watch) StartServer(host string) {
 
-	console.Bold.Println(host)
+	fmt.Println(host)
 
 	u, err := url.Parse(host)
-	exception.Assert(err)
+	if err != nil {
+		panic(err)
+	}
 
 	if u.Path == "" {
 		u.Path = "/"
@@ -41,7 +42,7 @@ func (w *Watch) StartServer(host string) {
 
 	var router = server.Router{IgnoreCase: true}
 
-	router.Route("GET", u.Path).Handler(func(stream *http.Stream) exception.Error {
+	router.Route("GET", u.Path).Handler(func(stream *http.Stream) error {
 
 		stream.AutoParse()
 
