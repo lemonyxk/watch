@@ -1,12 +1,12 @@
 ```text
 install:
-go get -u github.com/lemoyxk/go-watch
+go get -u github.com/lemoyxk/watch
 
 use:
 1.create file name .watch in you project
 2.write start shell
-3.go-watch --path /you/project/path
-4.or you can cd /you/project/path and run go-watch
+3.watch --path /you/project/path
+4.or you can cd /you/project/path and run watch
 
 watch file like this:
 [ignore]

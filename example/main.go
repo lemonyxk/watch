@@ -1,5 +1,5 @@
 /**
-* @program: go-watch
+* @program: watch
 *
 * @description:
 *
