@@ -18,26 +18,21 @@ func (w *Watch) Loop() {
 	var intervalTimer *time.Timer
 	var running = false
 	go func() {
-		for {
-			select {
-			case event := <-startChan:
-
-				if running {
-					continue
-				}
-
-				if intervalTimer != nil {
-					intervalTimer.Stop()
-				}
-
-				intervalTimer = time.AfterFunc(Interval, func() {
-					running = true
-					w.StopProcess()
-					w.startProcess(event)
-					running = false
-				})
-
+		for event := range startChan {
+			if running {
+				continue
 			}
+
+			if intervalTimer != nil {
+				intervalTimer.Stop()
+			}
+
+			intervalTimer = time.AfterFunc(Interval, func() {
+				running = true
+				w.StopProcess()
+				w.startProcess(event)
+				running = false
+			})
 		}
 	}()
 }
