@@ -7,7 +7,6 @@ github.com/golang/protobuf v1.4.0-rc.1.0.20200221234624-67d41d38c208/go.mod h1:x
 github.com/golang/protobuf v1.4.0-rc.2/go.mod h1:LlEzMj4AhA7rCAGe4KMBDvJI+AwstrUpVNzEA03Pprs=
 github.com/golang/protobuf v1.4.0-rc.4.0.20200313231945-b860323f09d0/go.mod h1:WU3c8KckQ9AFe+yFwt9sWVRKCVIyN9cPHBJSNnbL67w=
 github.com/golang/protobuf v1.4.0/go.mod h1:jodUvKwWbYaEsadDk5Fwe5c77LiNKVO9IDvqG2KuDX0=
-github.com/golang/protobuf v1.4.2 h1:+Z5KGCizgyZCbGh1KZqA0fcLLkwbsjIzS4aV2v7wJX0=
 github.com/golang/protobuf v1.4.2/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
@@ -16,10 +15,10 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/json-iterator/go v1.1.10 h1:Kz6Cvnvv2wGdaG/V8yMvfkmNiXq9Ya2KUv4rouJJr68=
 github.com/json-iterator/go v1.1.10/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
-github.com/lemoyxk/kitty v0.0.0-20200711144314-0f820d034ea7 h1:mzA3nnYIUazFaGwg1TWI2HOkGDCgFdqCCaOMWtqCoWs=
-github.com/lemoyxk/kitty v0.0.0-20200711144314-0f820d034ea7/go.mod h1:Aot+PMiwkUVhaUc0yr77x+7sYZQj1hix1n24HP31Gxs=
-github.com/lemoyxk/structure v0.0.0-20200711140904-e215490ca16b h1:2NWa1KUUjZc8vkWvhSWwf6SkIoa1vraLurlTxRISsU0=
-github.com/lemoyxk/structure v0.0.0-20200711140904-e215490ca16b/go.mod h1:JhfOlK049hEbq4IHMtF9eaPZR0sJHYDUjuuTeckYQZw=
+github.com/lemoyxk/kitty v0.0.0-20200918124950-750d2fb0c96c h1:b7AXPtC2W9/+JY/yjEme18y4ujqgz9FzS20g8z+hDvY=
+github.com/lemoyxk/kitty v0.0.0-20200918124950-750d2fb0c96c/go.mod h1:lnsJNKr0SwO951lDdb7aaq7Ahz9xgygmTyozo5UnDDA=
+github.com/lemoyxk/structure v0.0.0-20200917174835-81c7c3a2a6f1 h1:djbOUDBjg5JyeiVAtKMT30eG+5ImQxzUFIksrMQPKpU=
+github.com/lemoyxk/structure v0.0.0-20200917174835-81c7c3a2a6f1/go.mod h1:JhfOlK049hEbq4IHMtF9eaPZR0sJHYDUjuuTeckYQZw=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 h1:ZqeYNhU3OHLH3mGKHDcjJRFFRrJa6eAM5H+CtDdOsPc=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 h1:Esafd1046DLDQ0W1YjYsBW+p8U2u7vzgW2SQVmlNazg=
@@ -35,5 +34,4 @@ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
 google.golang.org/protobuf v1.20.1-0.20200309200217-e05f789c0967/go.mod h1:A+miEFZTKqfCUM6K7xSMQL9OKL/b6hQv+e19PK+JZNE=
 google.golang.org/protobuf v1.21.0/go.mod h1:47Nbq4nVaFHyn7ilMalzfO3qCViNmqZ2kzikPIcrTAo=
-google.golang.org/protobuf v1.23.0 h1:4MY060fB1DLGMB/7MBTLnwQUY6+F09GEiz6SsrNqyzM=
 google.golang.org/protobuf v1.23.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=

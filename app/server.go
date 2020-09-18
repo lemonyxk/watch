@@ -46,7 +46,7 @@ func (w *Watch) StartServer(host string) {
 
 		stream.AutoParse()
 
-		var name = stream.Query.Get("name").String()
+		var name = stream.Query.First("name").String()
 		if name == "" {
 			name = w.listenPath
 		}
