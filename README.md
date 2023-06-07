@@ -1,6 +1,6 @@
 ```text
 install:
-go get -u github.com/lemoyxk/watch
+go install github.com/lemoyxk/watch@v0.0.0-20220524105950-e29f0e06b0b1
 
 use:
 1.create file name .watch in you project
