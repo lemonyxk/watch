@@ -65,11 +65,10 @@ func (w *Watch) RunTask() {
 }
 
 func (w *Watch) Block() {
-	// 创建信号
 	signalChan := make(chan os.Signal, 1)
-	// 通知
+
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-	// 阻塞
+
 	sign := <-signalChan
 
 	fmt.Println("waiting close...")
@@ -85,25 +84,24 @@ func (w *Watch) Listen() {
 			select {
 			case ev := <-w.watch.Events:
 
-				// 排除 IGNORE 文件
-				// 用于新添加的文件
+				// filter match file
 				if w.MatchFile(ev.Name) {
 					break
 				}
 
-				// 排除目录
+				// filter match path
 				if w.MatchPath(ev.Name) {
 					break
 				}
 
-				// 排除正则
+				// filter regex
 				if w.MatchOthers(ev.Name) {
 					break
 				}
 
 				if ev.Op&fsnotify.Create == fsnotify.Create {
 					fmt.Println("create", ev.Name)
-					// 这里获取新创建文件的信息，如果是目录，则加入监控中
+					// if is dir, add watch
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Add(ev.Name)
@@ -113,7 +111,7 @@ func (w *Watch) Listen() {
 
 				if ev.Op&fsnotify.Remove == fsnotify.Remove {
 					fmt.Println("delete", ev.Name)
-					// 如果删除文件是目录，则移除监控
+					// if delete file is dir, remove watch
 					fi, err := os.Stat(ev.Name)
 					if err == nil && fi.IsDir() {
 						_ = w.watch.Remove(ev.Name)
@@ -121,22 +119,21 @@ func (w *Watch) Listen() {
 					}
 				}
 
-				// 重命名文件 删除监听
+				// rename event
 				if ev.Op&fsnotify.Rename == fsnotify.Rename {
 					fmt.Println("rename", ev.Name)
 					fmt.Println("delete watch", ev.Name)
-					// 获取不到旧文件的资料 直接移除
+					// remove old watch
 					_ = w.watch.Remove(ev.Name)
 				}
 
-				// 修改权限
 				if ev.Op&fsnotify.Chmod == fsnotify.Chmod {
 					if w.IsUpdate(ev.Name) {
 						w.Task(ev)
 					}
 				}
 
-				// 写入文件
+				// write event
 				if ev.Op&fsnotify.Write == fsnotify.Write {
 					if w.IsUpdate(ev.Name) {
 						w.Task(ev)
